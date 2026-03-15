@@ -158,13 +158,13 @@ button{cursor:pointer;border:none;background:none;color:inherit;}
   <div class="main">
     <!-- UPLOAD -->
     <div class="view active" id="uploadView">
-      <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept="image/*" hidden>
+      <label class="upload-zone" id="uploadZone" for="fileInput" style="cursor:pointer;">
+        <input type="file" id="fileInput" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0.01;top:0;left:0;">
         <div class="upload-icon">🖼️</div>
         <h2>Upload an Image</h2>
-        <p>Tap to select or drag &amp; drop</p>
+        <p>Tap here to choose a photo</p>
         <p class="fmt">PNG · JPG · WebP</p>
-      </div>
+      </label>
       <div class="key-section">
         <div class="key-label">Hugging Face API Key</div>
         <div class="key-row">
@@ -265,9 +265,15 @@ const STYLES = {
   'Neon cyberpunk':'neon cyberpunk, glowing lights, futuristic, dramatic shadows',
 };
 
+/* ── STORAGE (Safari-safe) ── */
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch(e) { return null; } },
+  set(k,v) { try { localStorage.setItem(k,v); } catch(e) {} },
+};
+
 /* ── STATE ── */
 const S = {
-  key: localStorage.getItem('hf_key') || '',
+  key: store.get('hf_key') || '',
   mode: 'inpaint',
   tool: 'brush',
   brushSize: 30,
@@ -328,8 +334,8 @@ function initKey() {
 keySave.onclick = () => {
   const v = keyInput.value.trim();
   if (!v.startsWith('hf_')) { keyStatus.textContent = '✗ Must start with hf_'; keyStatus.className = 'key-status bad'; return; }
-  S.key = v; localStorage.setItem('hf_key', v);
-  keyStatus.textContent = '✓ Saved'; keyStatus.className = 'key-status ok';
+  S.key = v; store.set('hf_key', v);
+  keyStatus.textContent = '✓ Key saved!'; keyStatus.className = 'key-status ok';
   toast('API key saved','ok');
 };
 
@@ -641,8 +647,7 @@ undoBtn.onclick   = undo;
 clearBtn.onclick  = clearMask;
 
 /* ── UPLOAD ── */
-uploadZone.onclick = () => fileInput.click();
-fileInput.onchange = e => { if(e.target.files?.[0]) loadImage(e.target.files[0]); };
+fileInput.addEventListener('change', e => { if(e.target.files?.[0]) loadImage(e.target.files[0]); });
 uploadZone.ondragover = e => { e.preventDefault(); uploadZone.classList.add('dragover'); };
 uploadZone.ondragleave= () => uploadZone.classList.remove('dragover');
 uploadZone.ondrop = e => { e.preventDefault(); uploadZone.classList.remove('dragover'); if(e.dataTransfer.files?.[0]) loadImage(e.dataTransfer.files[0]); };
