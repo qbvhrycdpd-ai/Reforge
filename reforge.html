@@ -163,9 +163,11 @@ button{cursor:pointer;border:none;background:none;color:inherit;}
         <h2>Upload an Image</h2>
         <p>Tap the button below</p>
         <p class="fmt">PNG · JPG · WebP</p>
-        <button id="pickBtn" style="margin-top:8px;padding:14px 32px;background:#ff6b35;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;-webkit-appearance:none;">Choose Photo</button>
+        <div style="position:relative;margin-top:8px;display:inline-block;">
+          <button style="padding:14px 32px;background:#ff6b35;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:600;display:block;pointer-events:none;">Choose Photo</button>
+          <input type="file" id="fileInput" accept="image/*" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:17px;">
+        </div>
       </div>
-      <input type="file" id="fileInput" accept="image/*" capture="environment" style="position:fixed;top:-500px;left:-500px;width:1px;height:1px;">
     </div>
 
     <!-- EDITOR -->
@@ -655,12 +657,6 @@ undoBtn.onclick   = undo;
 clearBtn.onclick  = clearMask;
 
 /* ── UPLOAD ── */
-const pickBtn = $('pickBtn');
-pickBtn.addEventListener('click', function(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  fileInput.click();
-});
 fileInput.addEventListener('change', function(e) {
   const file = e.target.files && e.target.files[0];
   if (file) loadImage(file);
